@@ -1,0 +1,46 @@
+#!/bin/bash
+shopt -s nullglob
+
+####################################################################################
+#
+#                        Fix File Names
+#
+# Author        : Kyle Rader - Graduate Teaching Assistant - WWU CS
+# Created       : 28 Feb 2015
+# Last Modified : 28 Feb 2015
+#
+# Description   : Iterate through each file name in DIRECTORY and try to match each regex and attempt
+#                 rename the file to the given desired name if a match is found.
+#                 Otherwise if no matches are found for a file display the file to the user and prompt for a new name.
+####################################################################################
+
+# Check command line arguments
+usage="usage: fix_file_name ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION"
+usage2="                    [ ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION ] ..."
+
+if [ $# -lt "4" -o $[ $# % 4 ] -ne "0" ]; then
+    echo $usage
+    echo $usage2
+    echo 
+    exit 1
+fi
+
+# Put command line args into an actual array
+args=( "$@" )
+files=( *.java )
+
+for file in ${files[@]} ; do
+
+    found=false
+    for (( fname=0, regex=1, new=2, perl=3 ; fname < $# ; fname+=4, regex+=4, new+=4, perl+=4 )); do
+	if [[ $file =~ ${args[regex]} ]]; then
+	    mv $file ${args[fname]}
+	    found=true
+	    break;
+	fi
+    done
+
+    if [ $found == "false" ]; then
+	echo "We're going manual"
+    fi
+done
