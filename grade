@@ -56,43 +56,18 @@ for zip in *.zip ; do
     # Get MAC folder outa here
     rm -rf __MACOSX
     
+    echo "Gathering Java Files..."
     # find java files if there is another directory in here
     if [ "$(find -not -name . -type d | wc -l)" -ne "0" ]; then
 	find -name '*.java' -exec mv {} ./ \;
 	find -type d -not -name . -prune -exec rm -rf {} \;
     fi
-    if [ "$(ls -lf *.java | wc -l)" -eq "2" ]; then
-	for file in *.java ; do
+    
+    echo "Fixing File Names..."
+    # Fix java file names and class names
+    ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?.*{/class Hanoi {/g' \
+	"OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?.*{/class Fibonacci {/g'
 
-	    # Check files for expected file names.
-	    if [[ "$file" =~ .*[Hh]an.*\.java ]]; then
-		mv $file OrigHanoi.java
-	    elif [[ "$file" =~ .*[Ff]ib.*\.java ]]; then
-		mv $file OrigFib.java
-
-		# No expected files, manual rename
-	    else
-		echo "Trying to rename file ($file). What should it be?"
-		echo "--------------------------------------------------"
-		head -25 $file
-		printf "New Name:\n>"
-		read newName
-		if [ ! -z "$newName" ]; then
-		    mv $file $newName
-		fi			
-	    fi		    
-	done
-
-	# Rename classes inside expected source code files.		
-	if [ -a OrigHanoi.java ]; then
-	    perl -0777 -pe 's/class.*\n?.*{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
-	fi
-	if [ -a OrigFib.java ]; then
-	    perl -0777 -pe 's/class.*\n?.*{/class FibClass {/g' OrigFib.java > FibClass.java
-	fi
-    else
-	touch BadFileSetup
-    fi
     cd ../
 done
 
