@@ -75,6 +75,7 @@ for zip in *.zip ; do
 		    echo "Trying to rename file ($file). What should it be?"
 		    echo "--------------------------------------------------"
 		    head -25 $file
+		    printf "New Name:\n>"
 		    read newName
 		    if [ ! -z "$newName" ]; then
 			mv $file $newName
@@ -95,6 +96,7 @@ for zip in *.zip ; do
 	cd ../
 done
 
+printf "\nSummary:\n"
 echo "Bad Submissions: $(find . | grep "BadFileSetup" | wc -l)"
 cd ../
 
