@@ -16,6 +16,9 @@
 remove='_*'
 cd subs/
 
+# This RAW Java file setup should not be required normally and will be removed
+# in the future
+
 # Setup people's raw java files
 for file in $(ls *Han*.java) ; do
     student=${file%%$remove}
@@ -43,6 +46,9 @@ for zip in *.zip ; do
     student=${zip%%$remove}
     zipNoSpace=${zip// /_}
 
+    echo
+    echo "Grading: $student"
+
     # Get rid of spaces in the zip folder name
     if [ "$zip" != "$zipNoSpace" ] ; then
 	mv -f $student*.zip $zipNoSpace
@@ -68,11 +74,27 @@ for zip in *.zip ; do
     ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?.*{/class Hanoi {/g' \
 	"OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?.*{/class Fibonacci {/g'
 
+
+    echo "Compiling code..."
+    # Ready to compile expected files and run tests.
+    if [ -f Hanoi.java ]; then
+	javac Hanoi.java &> Hanoi.err
+    fi
+    if [ -f Fibonacci.java ]; then
+	javac Fibonacci.java &> Fibonacci.err
+    fi
+    
+#    if [ -e Hanoi.class ]; then
+#	for (( i=0 ; i < 10 ; i++ )); do
+#	    printf "i = $i : %s\n" "$(java -classpath ./ Hanoi $i)" >> Hanoi.out
+#	done
+#    fi
+
     cd ../
 done
 
-printf "\nSummary:\n"
-echo "Bad Submissions: $(find . | grep "BadFileSetup" | wc -l)"
-cd ../
+echo 
+echo "-- Grading Complete --"
+
 
 
