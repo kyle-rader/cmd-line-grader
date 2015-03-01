@@ -1,0 +1,100 @@
+####################################################################################
+#
+#                               Command Line Speed Grader 
+# Author       : Kyle Rader, WWU CS Graduate Teaching Assistant
+# Created      : 28 Feb 2015
+# Last Modified: 28 Feb 2015
+#
+# Description  : This is a generic command line speed grader program
+#                for compiling, testing, and reviewing Java assignments
+#                from CSCI 145 - WWU CS.
+####################################################################################
+
+#!/bin/bash
+
+remove='_*'
+cd subs/
+
+# Setup people's raw java files
+for file in $(ls *Han*.java) ; do
+	student=${file%%$remove}
+	
+	mkdir -p $student
+	mv $file $student/OrigHanoi.java
+	cd $student
+	perl -0777 -pe 's/class.*\n?.*{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
+	cd ../
+done
+
+# Setup people's raw fib files
+for file in $(ls *Fib*.java) ; do
+	student=${file%%$remove}
+
+	mkdir -p $student
+	mv $file $student/OrigFib.java 
+	cd $student
+	perl -0777 -pe 's/class.*\n?.*{/class FibClass {/g' OrigFib.java > FibClass.java
+	cd ../
+done
+
+# Setup zip files
+for zip in *.zip ; do
+	student=${zip%%$remove}
+	zipNoSpace=${zip// /_}
+
+	# Get rid of spaces in the zip folder name
+	if [ "$zip" != "$zipNoSpace" ] ; then
+	    mv -f $student*.zip $zipNoSpace
+	fi
+
+	mkdir -p $student
+	mv $zipNoSpace $student/orig.zip
+	cd $student
+	unzip orig.zip > /dev/null
+	
+	# Get MAC folder outa here
+	rm -rf __MACOSX
+	
+	# find java files if there is another directory in here
+	if [ "$(find -not -name . -type d | wc -l)" -ne "0" ]; then
+	    find -name '*.java' -exec mv {} ./ \;
+	    find -type d -not -name . -prune -exec rm -rf {} \;
+	fi
+	if [ "$(ls -lf *.java | wc -l)" -eq "2" ]; then
+	    for file in *.java ; do
+
+		# Check files for expected file names.
+		if [[ "$file" =~ .*[Hh]an.*\.java ]]; then
+		    mv $file OrigHanoi.java
+		elif [[ "$file" =~ .*[Ff]ib.*\.java ]]; then
+		    mv $file OrigFib.java
+
+		# No expected files, manual rename
+		else
+		    echo "Trying to rename file ($file). What should it be?"
+		    echo "--------------------------------------------------"
+		    head -25 $file
+		    read newName
+		    if [ ! -z "$newName" ]; then
+			mv $file $newName
+		    fi			
+		fi		    
+	    done
+
+	    # Rename classes inside expected source code files.		
+	    if [ -a OrigHanoi.java ]; then
+		perl -0777 -pe 's/class.*\n?.*{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
+	    fi
+	    if [ -a OrigFib.java ]; then
+		perl -0777 -pe 's/class.*\n?.*{/class FibClass {/g' OrigFib.java > FibClass.java
+	    fi
+	else
+		touch BadFileSetup
+	fi
+	cd ../
+done
+
+echo "Bad Submissions: $(find . | grep "BadFileSetup" | wc -l)"
+cd ../
+
+

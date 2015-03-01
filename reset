@@ -1,0 +1,6 @@
+#!/bin/bash
+echo 'Removing Files...'
+rm -rf subs bad-subs
+cp -r bck/ subs/
+echo 'Good as new!'
+
