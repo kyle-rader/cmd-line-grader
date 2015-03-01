@@ -1,6 +1,6 @@
 #!/bin/bash
 echo 'Removing Files...'
-rm -rf subs bad-subs
+rm -rf subs/
 cp -r bck/ subs/
 echo 'Good as new!'
 

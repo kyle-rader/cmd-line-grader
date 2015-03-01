@@ -84,11 +84,24 @@ for zip in *.zip ; do
 	javac Fibonacci.java &> Fibonacci.err
     fi
     
-#    if [ -e Hanoi.class ]; then
-#	for (( i=0 ; i < 10 ; i++ )); do
-#	    printf "i = $i : %s\n" "$(java -classpath ./ Hanoi $i)" >> Hanoi.out
-#	done
-#    fi
+    # Test Fibonacci
+    printf "Testing ... "
+    if [ -e Fibonacci.class ]; then
+	for (( i=0 ; i < 10 ; i++ )); do
+	    printf "i = $i : %s\n\n" "$(timeout -k 2 2 java Fibonacci $i 2>> Fibonacci.err)" >> Fibonacci.out
+	done
+	printf " Fibonacci done... "
+    fi
+    
+
+    # Test Hanoi
+    if [ -e Hanoi.class ]; then
+	for (( i=1 ; i < 4 ; i++ )); do
+	    printf "i = $i :\n%s\n\n" "$(timeout -k 2 2 java Hanoi $i 2>> Hanoi.err)" >> Hanoi.out
+	done
+	printf " Hanoi done...\n"
+    fi
+    
 
     cd ../
 done
