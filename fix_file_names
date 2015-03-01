@@ -50,10 +50,11 @@ for file in ${files[@]} ; do
     done
 
     if [ $found == "false" ]; then
-	echo "Trying to rename file: $file"
-	echo "Here it is..."
+	echo
+	echo "!! HELP !!"
+	echo "Trying to rename: $file"
 	more "$file"
-	printf "New filename (Enter to use same) > "
+	printf "\nNew filename (Enter to use same) > "
 	read newFilename
 	if [ ! -z $newFilename ]; then
 	    mv "$file" "$newFilename"
@@ -62,9 +63,7 @@ for file in ${files[@]} ; do
 done
 
 for (( fname=0, new=2, perl=3 ; fname < $# ; fname+=4, new+=4, perl+=4 )); do
-    echo "Trying to run \" ${args[perl]} \" on ${args[fname]} and store it in ${args[new]}"
     if [ -f "${args[fname]}" ]; then
-	echo "Running perl"
 	perl -0777 -pe "${args[perl]}" ${args[fname]} > ${args[new]}
     fi
 done
