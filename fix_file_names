@@ -18,6 +18,7 @@ shopt -s nullglob
 usage="usage: fix_file_name ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION"
 usage2="                    [ ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION ] ..."
 
+# Check for at least 4 args or a multiple of 4 args.
 if [ $# -lt "4" -o $[ $# % 4 ] -ne "0" ]; then
     echo $usage
     echo $usage2
@@ -25,22 +26,35 @@ if [ $# -lt "4" -o $[ $# % 4 ] -ne "0" ]; then
     exit 1
 fi
 
-# Put command line args into an actual array
+# Put command line args into an actual array,
 args=( "$@" )
-files=( *.java )
+
+# Collect all java file names in the current directory.
+# (Must use quotes here to correctly separate file names with spaces)
+files=( "*.java" )
 
 for file in ${files[@]} ; do
 
     found=false
     for (( fname=0, regex=1, new=2, perl=3 ; fname < $# ; fname+=4, regex+=4, new+=4, perl+=4 )); do
-	if [[ $file =~ ${args[regex]} ]]; then
-	    mv $file ${args[fname]}
+	if [[ "$file" =~ ${args[regex]} ]]; then
+
+	    # Rename file to ORIG_FILENAME
+	    mv "$file" ${args[fname]}
 	    found=true
 	    break;
 	fi
     done
 
     if [ $found == "false" ]; then
-	echo "We're going manual"
+	echo "Trying to rename file: $file"
+	echo "Here it is..."
+	more "$file"
+	printf "New filename (Enter to use same) > "
+	read newFilename
+	if [ ! -z $newFilename ]; then
+	    mv "$file" "$newFilename"
+	fi
     fi
 done
+
