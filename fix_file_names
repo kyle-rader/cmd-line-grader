@@ -33,6 +33,7 @@ args=( "$@" )
 # (Must use quotes here to correctly separate file names with spaces)
 files=( "*.java" )
 
+# Try to match all files with a desired filename
 for file in ${files[@]} ; do
 
     found=false
@@ -40,7 +41,9 @@ for file in ${files[@]} ; do
 	if [[ "$file" =~ ${args[regex]} ]]; then
 
 	    # Rename file to ORIG_FILENAME
-	    mv "$file" ${args[fname]}
+	    if [ "$file" != "${args[fname]}" ]; then
+		mv "$file" ${args[fname]}
+	    fi
 	    found=true
 	    break;
 	fi
@@ -55,6 +58,14 @@ for file in ${files[@]} ; do
 	if [ ! -z $newFilename ]; then
 	    mv "$file" "$newFilename"
 	fi
+    fi
+done
+
+for (( fname=0, new=2, perl=3 ; fname < $# ; fname+=4, new+=4, perl+=4 )); do
+    echo "Trying to run \" ${args[perl]} \" on ${args[fname]} and store it in ${args[new]}"
+    if [ -f "${args[fname]}" ]; then
+	echo "Running perl"
+	perl -0777 -pe "${args[perl]}" ${args[fname]} > ${args[new]}
     fi
 done
 
