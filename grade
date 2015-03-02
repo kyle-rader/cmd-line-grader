@@ -71,8 +71,8 @@ for zip in *.zip ; do
     
     echo "Fixing File Names..."
     # Fix java file names and class names
-    ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?.*{/class Hanoi {/g' \
-	"OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?.*{/class Fibonacci {/g'
+    ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?{/class Hanoi {/g' \
+	"OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?{/class Fibonacci {/g'
 
 
     echo "Compiling code..."
