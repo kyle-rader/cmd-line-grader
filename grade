@@ -26,7 +26,7 @@ for file in $(ls *Han*.java) ; do
     mkdir -p $student
     mv $file $student/OrigHanoi.java
     cd $student
-    perl -0777 -pe 's/class.*\n?.*{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
+    perl -0777 -pe 's/class.*\n?{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
     cd ../
 done
 
@@ -37,7 +37,7 @@ for file in $(ls *Fib*.java) ; do
     mkdir -p $student
     mv $file $student/OrigFib.java 
     cd $student
-    perl -0777 -pe 's/class.*\n?.*{/class FibClass {/g' OrigFib.java > FibClass.java
+    perl -0777 -pe 's/class.*\n?{/class Fibonacci {/g' OrigFib.java > Fibonacci.java
     cd ../
 done
 
@@ -45,9 +45,6 @@ done
 for zip in *.zip ; do
     student=${zip%%$remove}
     zipNoSpace=${zip// /_}
-
-    echo
-    echo "Grading: $student"
 
     # Get rid of spaces in the zip folder name
     if [ "$zip" != "$zipNoSpace" ] ; then
@@ -62,14 +59,24 @@ for zip in *.zip ; do
     # Get MAC folder outa here
     rm -rf __MACOSX
     
-    echo "Gathering Java Files..."
     # find java files if there is another directory in here
     if [ "$(find -not -name . -type d | wc -l)" -ne "0" ]; then
 	find -name '*.java' -exec mv {} ./ \;
 	find -type d -not -name . -prune -exec rm -rf {} \;
     fi
-    
-    echo "Fixing File Names..."
+
+    cd ../
+done
+
+echo "-- Setup done.  Ready to grade $(find -maxdepth 1 -type d -not -name . | wc -l) students. --"
+echo
+
+for student in `find -maxdepth 1 -type d -not -name .`; do
+
+    echo "Grading $student :"
+
+    cd $student
+
     # Fix java file names and class names
     ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?{/class Hanoi {/g' \
 	"OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?{/class Fibonacci {/g'
@@ -85,14 +92,14 @@ for zip in *.zip ; do
     fi
     
     # Test Fibonacci
-    printf "Testing ... "
+    echo "Testing ... "
     if [ -e Fibonacci.class ]; then
 	printf "No Args: %s\n" "$(timeout -k 2 2 java Fibonacci 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
 	printf "Bad Arg: %s\n" "$(timeout -k 2 2 java Fibonacci five 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
 	for (( i=0 ; i < 10 ; i++ )); do
 	    printf "i = $i : %s\n\n" "$(timeout -k 2 2 java Fibonacci $i 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
 	done
-	printf " Fibonacci done... "
+	echo " Fibonacci done... "
     fi
     
 
@@ -103,8 +110,9 @@ for zip in *.zip ; do
 	for (( i=1 ; i < 4 ; i++ )); do
 	    printf "i = $i :\n%s\n\n" "$(timeout -k 2 2 java Hanoi $i 2>> Hanoi.err.txt)" >> Hanoi.out.txt
 	done
-	printf " Hanoi done...\n"
+	echo " Hanoi done..."
     fi
+    echo
 
     cd ../
 done
