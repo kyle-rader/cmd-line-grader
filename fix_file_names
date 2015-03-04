@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-####################################################################################
+################################################################################
 #
 #                        Fix File Names
 #
@@ -8,10 +8,12 @@
 # Created       : 28 Feb 2015
 # Last Modified : 1 March 2015
 #
-# Description   : Iterate through each file name in DIRECTORY and try to match each regex and attempt
-#                 rename the file to the given desired name if a match is found.
-#                 Otherwise if no matches are found for a file display the file to the user and prompt for a new name.
-####################################################################################
+# Description : Iterate through each file name in DIRECTORY and try to
+#                 match each regex and attempt rename the file to the
+#                 given desired name if a match is found.  Otherwise
+#                 if no matches are found for a file display the file
+#                 to the user and prompt for a new name.
+################################################################################
 
 set -e
 
@@ -25,7 +27,7 @@ usage2="                    [ ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTI
 if [ $# -lt "4" -o $[ $# % 4 ] -ne "0" ]; then
     echo $usage
     echo $usage2
-    echo 
+    echo
     exit 1
 fi
 
@@ -41,33 +43,32 @@ for file in ${files[@]} ; do
 
     found=false
     for (( fname=0, regex=1, new=2, perl=3 ; fname < $# ; fname+=4, regex+=4, new+=4, perl+=4 )); do
-	if [[ "$file" =~ ${args[regex]} ]]; then
+  if [[ "$file" =~ ${args[regex]} ]]; then
 
-	    # Rename file to ORIG_FILENAME
-	    if [ "$file" != "${args[fname]}" ]; then
-		mv "$file" ${args[fname]}
-	    fi
-	    found=true
-	    break;
-	fi
+      # Rename file to ORIG_FILENAME
+      if [ "$file" != "${args[fname]}" ]; then
+    mv "$file" ${args[fname]}
+      fi
+      found=true
+      break;
+  fi
     done
 
     if [ $found == "false" ]; then
-	echo
-	echo "!! HELP !!"
-	echo "Trying to rename: $file"
-	more "$file"
-	printf "\nNew filename (Enter to use same) > "
-	read newFilename
-	if [ ! -z $newFilename ]; then
-	    mv "$file" "$newFilename"
-	fi
+  echo
+  echo "!! HELP !!"
+  echo "Trying to rename: $file"
+  more "$file"
+  printf "\nNew filename (Enter to use same) > "
+  read newFilename
+  if [ ! -z $newFilename ]; then
+      mv "$file" "$newFilename"
+  fi
     fi
 done
 
 for (( fname=0, new=2, perl=3 ; fname < $# ; fname+=4, new+=4, perl+=4 )); do
     if [ -f "${args[fname]}" ]; then
-	perl -0777 -pe "${args[perl]}" ${args[fname]} > ${args[new]}
+  perl -0777 -pe "${args[perl]}" ${args[fname]} > ${args[new]}
     fi
 done
-
