@@ -1,6 +1,8 @@
 #!/bin/bash
+
+set -e
+
 echo 'Removing Files...'
 rm -rf subs/
 cp -r bck/ subs/
 echo 'Good as new!'
-

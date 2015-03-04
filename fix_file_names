@@ -1,5 +1,4 @@
 #!/bin/bash
-shopt -s nullglob
 
 ####################################################################################
 #
@@ -14,10 +13,14 @@ shopt -s nullglob
 #                 Otherwise if no matches are found for a file display the file to the user and prompt for a new name.
 ####################################################################################
 
-# Check command line arguments
+set -e
+
+shopt -s nullglob
+
 usage="usage: fix_file_name ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION"
 usage2="                    [ ORIG_FILENAME REGEX FINAL_FILENAME PERL_SUBSTITUTION ] ..."
 
+# Check command line arguments
 # Check for at least 4 args or a multiple of 4 args.
 if [ $# -lt "4" -o $[ $# % 4 ] -ne "0" ]; then
     echo $usage
