@@ -5,7 +5,7 @@
 #                               Command Line Speed Grader
 # Author       : Kyle Rader, WWU CS Graduate Teaching Assistant
 # Created      : 28 Feb 2015
-# Last Modified: 1 March 2015
+# Last Modified: 5 March 2015
 #
 # Description : This is a generic command line speed grader program
 #                for compiling, testing, and reviewing Java
@@ -21,25 +21,12 @@ cd subs/
 # in the future
 
 # Setup people's raw java files
-for file in $(ls *Han*.java) ; do
+files=( "*.java" )
+for file in ${files[@]} ; do
     student=${file%%$remove}
 
     mkdir -p $student
-    mv $file $student/OrigHanoi.java
-    cd $student
-    perl -0777 -pe 's/class.*\n?{/class Hanoi {/g' OrigHanoi.java > Hanoi.java
-    cd ../
-done
-
-# Setup people's raw fib files
-for file in $(ls *Fib*.java) ; do
-    student=${file%%$remove}
-
-    mkdir -p $student
-    mv $file $student/OrigFib.java
-    cd $student
-    perl -0777 -pe 's/class.*\n?{/class Fibonacci {/g' OrigFib.java > Fibonacci.java
-    cd ../
+    mv $file $student/
 done
 
 # Setup zip files
@@ -82,6 +69,8 @@ for student in `find -maxdepth 1 -type d -not -name .`; do
     ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?{/class Hanoi {/g' \
   "OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?{/class Fibonacci {/g'
 
+    # Copy any common files into the student's directory.
+    cp ../../common/* ./
 
     echo "Compiling code..."
     # Ready to compile expected files and run tests.
