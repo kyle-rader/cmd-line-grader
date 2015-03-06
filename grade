@@ -61,51 +61,51 @@ echo
 
 for student in `find -maxdepth 1 -type d -not -name .`; do
 
-    echo "Grading $student :"
+    echo "Setting up: $student :"
 
     cd $student
 
     # Fix java file names and class names
-    ../../fix_file_names "OrigHanoi.java" ".*[Hh]an.*\.java" "Hanoi.java" 's/class.*\n?{/class Hanoi {/g' \
-  "OrigFibonacci.java" ".*[Ff]ib.*\.java" "Fibonacci.java" 's/class.*\n?{/class Fibonacci {/g'
+    ../../fix_file_names "OrigMazeSolver.java" ".*[Ss]?olv.*\.java" "MazeSolver.java" 's/class.*\n?{/class MazeSolver {/g' \
+  "OrigDrawMaze.java" ".*[Dd]raw.*\.java" "DrawMaze.java" 's/class.*\n?{/class DrawMaze {/g'
 
     # Copy any common files into the student's directory.
     cp ../../common/* ./
 
-    echo "Compiling code..."
+#    echo "Compiling code..."
     # Ready to compile expected files and run tests.
-    if [ -f Hanoi.java ]; then
-  javac Hanoi.java &> Hanoi.err.txt || :
-    fi
-    if [ -f Fibonacci.java ]; then
-  javac Fibonacci.java &> Fibonacci.err.txt || :
-    fi
+#    if [ -f Hanoi.java ]; then
+#  javac Hanoi.java &> Hanoi.err.txt || :
+#    fi
+#    if [ -f Fibonacci.java ]; then
+#  javac Fibonacci.java &> Fibonacci.err.txt || :
+#    fi
 
     # Test Fibonacci
-    echo "Testing ... "
-    if [ -e Fibonacci.class ]; then
+#    echo "Testing ... "
+#    if [ -e Fibonacci.class ]; then
+#
+#  printf "No Args: %s\n" "$(timeout -k 2 2 java Fibonacci 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
+#  printf "Bad Arg: %s\n" "$(timeout -k 2 2 java Fibonacci five 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
+#  for (( i=0 ; i < 10 ; i++ )); do
+#      printf "i = $i : %s\n\n" "$(timeout -k 2 2 echo $i | java Fibonacci $i 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
+#  done
+#  echo " Fibonacci done... "
 
-  printf "No Args: %s\n" "$(timeout -k 2 2 java Fibonacci 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
-  printf "Bad Arg: %s\n" "$(timeout -k 2 2 java Fibonacci five 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
-  for (( i=0 ; i < 10 ; i++ )); do
-      printf "i = $i : %s\n\n" "$(timeout -k 2 2 echo $i | java Fibonacci $i 2>> Fibonacci.err.txt)" >> Fibonacci.out.txt
-  done
-  echo " Fibonacci done... "
-
-    fi
+#    fi
 
 
     # Test Hanoi
-    if [ -e Hanoi.class ]; then
+#    if [ -e Hanoi.class ]; then
+#
+#  printf "No Args: %s\n" "$(timeout -k 2 2 java Hanoi 2>> Hanoi.err.txt)" >> Hanoi.out.txt
+#  printf "Bad Arg: %s\n" "$(timeout -k 2 2 java Hanoi five 2>> Hanoi.err.txt)" >> Hanoi.out.txt
+#  for (( i=1 ; i < 4 ; i++ )); do
+#      printf "i = $i :\n%s\n\n" "$(timeout -k 2 2 echo $i | java Hanoi $i 2>> Hanoi.err.txt)" >> Hanoi.out.txt
+#  done
+#  echo " Hanoi done..."
 
-  printf "No Args: %s\n" "$(timeout -k 2 2 java Hanoi 2>> Hanoi.err.txt)" >> Hanoi.out.txt
-  printf "Bad Arg: %s\n" "$(timeout -k 2 2 java Hanoi five 2>> Hanoi.err.txt)" >> Hanoi.out.txt
-  for (( i=1 ; i < 4 ; i++ )); do
-      printf "i = $i :\n%s\n\n" "$(timeout -k 2 2 echo $i | java Hanoi $i 2>> Hanoi.err.txt)" >> Hanoi.out.txt
-  done
-  echo " Hanoi done..."
-
-    fi
+#    fi
     echo
 
     cd ../
