@@ -30,7 +30,12 @@ for file in ${files[@]} ; do
 done
 
 # Setup zip files
-for zip in *.zip ; do
+zips=( "*.zip" )
+for zip in ${zips[@]} ; do
+
+    # Check for nonexpanded match
+    [[ "$zip" = '*.zip' ]] && [[ ! -e '*.txt' ]] && continue
+
     student=${zip%%$remove}
     zipNoSpace=${zip// /_}
 
@@ -66,11 +71,11 @@ for student in `find -maxdepth 1 -type d -not -name .`; do
     cd $student
 
     # Fix java file names and class names
-    ../../fix_file_names "OrigMazeSolver.java" ".*[Ss]?olv.*\.java" "MazeSolver.java" 's/class.*\n?{/class MazeSolver {/g' \
-  "OrigDrawMaze.java" ".*[Dd]raw.*\.java" "DrawMaze.java" 's/class.*\n?{/class DrawMaze {/g'
+    ../../fix_file_names "OrigKakuro.java" ".*[Kk]?aku.*\.java" "Kakuro.java" 's/class.*\n?{/class Kakuro {/g'
 
     # Copy any common files into the student's directory.
     cp ../../common/* ./
+
 
 #    echo "Compiling code..."
     # Ready to compile expected files and run tests.
