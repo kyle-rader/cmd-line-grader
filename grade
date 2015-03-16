@@ -5,7 +5,7 @@
 #                               Command Line Speed Grader
 # Author       : Kyle Rader, WWU CS Graduate Teaching Assistant
 # Created      : 28 Feb 2015
-# Last Modified: 5 March 2015
+# Last Modified: 16 March 2015
 #
 # Description : This is a generic command line speed grader program
 #                for compiling, testing, and reviewing Java
@@ -23,6 +23,10 @@ cd subs/
 # Setup people's raw java files
 files=( "*.java" )
 for file in ${files[@]} ; do
+
+    # CHeck for non expanded match
+    [[ "$file" = '*.java' ]] && [[ ! -e '*.java' ]] && continue
+
     student=${file%%$remove}
 
     mkdir -p $student
@@ -63,22 +67,35 @@ done
 
 echo "-- Setup done.  Ready to grade $(find -maxdepth 1 -type d -not -name . | wc -l) students. --"
 echo
-
-for student in `find -maxdepth 1 -type d -not -name .`; do
+students=( "$(find -maxdepth 1 -type d -not -name .)" )
+echo $students
+i=0
+for student in ${students[@]}; do
 
     echo "Setting up: $student :"
 
     cd $student
 
     # Fix java file names and class names
-    ../../fix_file_names "OrigKakuro.java" ".*[Kk]?aku.*\.java" "Kakuro.java" 's/class.*\n?{/class Kakuro {/g'
+    ../../fix_file_names "OrigBookCollection.java" ".*BookCol.*\.java" "BookCollection.java" 's/class.*\n?{/class BookCollection {/'
 
     # Copy any common files into the student's directory.
     cp ../../common/* ./
 
-
-#    echo "Compiling code..."
+    echo "Compiling code..."
     # Ready to compile expected files and run tests.
+    if [ -f BookCollection.java ]; then
+  javac Book.java
+  javac BookCollection.java &> compile-log.txt || :
+    fi
+
+    if [ -e BookCollection.class ]; then
+  javac BookStuff.java
+  timeout 2 java BookStuff List1.txt Change1.txt List2.txt Change2.txt 2> err.txt > out.txt || :
+    else
+  echo 'Failed to compile'
+    fi
+
 #    if [ -f Hanoi.java ]; then
 #  javac Hanoi.java &> Hanoi.err.txt || :
 #    fi
@@ -112,9 +129,10 @@ for student in `find -maxdepth 1 -type d -not -name .`; do
 
 #    fi
     echo
-
+    i=$[$i + 1]
     cd ../
 done
+echo "Graded $i students"
 
 echo
 echo "-- Grading Complete --"

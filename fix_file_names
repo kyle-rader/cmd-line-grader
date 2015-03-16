@@ -6,7 +6,7 @@
 #
 # Author        : Kyle Rader - Graduate Teaching Assistant - WWU CS
 # Created       : 28 Feb 2015
-# Last Modified : 1 March 2015
+# Last Modified : 16 March 2015
 #
 # Description : Iterate through each file name in DIRECTORY and try to
 #                 match each regex and attempt rename the file to the
@@ -55,7 +55,7 @@ for file in ${files[@]} ; do
     done
 
     if [ $found == "false" ]; then
-  echo
+  echo "****************************************"
   echo "!! HELP !!"
   echo "Trying to rename: $file"
   more "$file"
