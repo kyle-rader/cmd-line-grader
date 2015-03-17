@@ -72,26 +72,27 @@ students=( "$(find -maxdepth 1 -type d -not -name .)" )
 i=0
 for student in ${students[@]}; do
 
-    echo "Setting up: $student :"
+    echo "Setting up: ${student##./} :"
 
     cd $student
 
     # Fix java file names and class names
-    ../../fix_file_names "OrigBookCollection.java" ".*BookCol.*\.java" "BookCollection.java" 's/class.*\n?{/class BookCollection {/'
+    ../../fix_file_names "OrigLString.java" ".*[Ll][Ss]tring.*\.java" "LString.java" 's/class.*\n?{/class LString {/'
 
     # Copy any common files into the student's directory.
-    cp ../../common/* ./
+    # TODO: Make this optional via configs
+    #cp ../../common/* ./
+    cp ../../common/LStringTest.java ./
 
     echo "Compiling code..."
     # Ready to compile expected files and run tests.
-    if [ -f BookCollection.java ]; then
-  javac Book.java
-  javac BookCollection.java &> compile-log.txt || :
+    if [ -f LString.java ]; then
+  javac LString.java &> compile-log.txt || :
     fi
 
-    if [ -e BookCollection.class ]; then
-  javac BookStuff.java &>> compile-log.txt || :
-  timeout 2 java BookStuff List1.txt Change1.txt List2.txt Change2.txt 2> err.txt > out.txt || :
+    if [ -e LString.class ]; then
+  javac -cp ../../common/junit.jar:. LStringTest.java &>> compile-log.txt || :
+  timeout 4 java -cp ../../common/junit.jar:. LStringTest 2> err.txt > out.txt || :
     else
   echo 'Failed to compile'
     fi
