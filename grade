@@ -5,7 +5,7 @@
 #                               Command Line Speed Grader
 # Author       : Kyle Rader, WWU CS Graduate Teaching Assistant
 # Created      : 28 Feb 2015
-# Last Modified: 16 March 2015
+# Last Modified: 23 March 2015
 #
 # Description : This is a generic command line speed grader program
 #                for compiling, testing, and reviewing Java
@@ -77,25 +77,28 @@ for student in ${students[@]}; do
     cd $student
 
     # Fix java file names and class names
-    ../../fix_file_names "OrigLString.java" ".*[Ll][Ss]tring.*\.java" "LString.java" 's/class.*\n?{/class LString {/'
+    #../../fix_file_names "OrigLString.java" ".*[Ll][Ss]tring.*\.java" "LString.java" 's/class.*\n?{/class LString {/'
 
     # Copy any common files into the student's directory.
     # TODO: Make this optional via configs
-    #cp ../../common/* ./
-    cp ../../common/LStringTest.java ./
+    cp ../../common/*.txt ./
+
+    if [ ! -f Queue.java ]; then
+  cp ../../common/Queue.java ./
+    fi
+    if [ ! -f LinkedList.java ]; then
+  cp ../../common/LinkedList.java ./
+    fi
 
     echo "Compiling code..."
     # Ready to compile expected files and run tests.
-    if [ -f LString.java ]; then
-  javac LString.java &> compile-log.txt || :
+    javaFiles=( "*.java" )
+    if [ ${#javaFiles[@]} -gt 0 ]; then
+  javac -cp ./ $javaFiles &>> compile-log.txt || :
     fi
 
-    if [ -e LString.class ]; then
-  javac -cp ../../common/junit.jar:. LStringTest.java &>> compile-log.txt || :
-  timeout 4 java -cp ../../common/junit.jar:. LStringTest 2> err.txt > out.txt || :
-    else
-  echo 'Failed to compile'
-    fi
+    java $(grep -rl "main" . | grep "class" | sed 's/.\///' | sed 's/.class//') Books.txt Transactions.txt &>> done.txt || :
+
 
 #    if [ -f Hanoi.java ]; then
 #  javac Hanoi.java &> Hanoi.err.txt || :
